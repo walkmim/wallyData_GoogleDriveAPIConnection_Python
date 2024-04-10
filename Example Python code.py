@@ -1,3 +1,11 @@
+# FIRSTLY YOU NEEED TO INSTALL THESE PYTHON LIBS
+
+# python3 -m pip install --upgrade pip
+# python3 -m pip install google-auth
+# python3 -m pip install google-api-python-client
+# python3 -m pip install google_auth_oauthlib
+
+# https://developers.google.com/identity?hl=pt-br
 
 import os
 from google.oauth2.credentials import Credentials
