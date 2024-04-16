@@ -17,7 +17,9 @@ from googleapiclient.http import MediaFileUpload
 # Configure your own credentials
 client_id = ""
 client_secret = ""
-filepath = f"C:\Temp\lucianoBrabo.txt"
+Sourcefilepath = f"C:\Temp\dataeng\lucianoBrabo.txt"
+
+TargetfolderId = '1vbL2CceZF3zlrD991gEFYQv5Vq1pYjkJ'
 
 # Define the scope for Google Drive API
 SCOPES = ['https://www.googleapis.com/auth/drive']
@@ -74,32 +76,45 @@ def authenticate_with_token(token):
             creds.refresh(Request())
     return creds
 
-def upload_file_to_drive(file_path, token):
+#########################################################################################################################
+
+
+def upload_file_to_drive(file_path, token, folder_id):
     """
     Upload a file to Google Drive.
 
     Args:
         file_path (str): Path to the file to be uploaded.
         token (dict): Token dictionary containing access token, refresh token, etc.
+        folder_id (str): ID of the folder to upload the file into.
     """
+    
     creds = authenticate_with_token(token)
     service = build('drive', 'v3', credentials=creds)
     file_name = os.path.basename(file_path)
-    file_metadata = {'name': file_name}
+    file_metadata = {
+        'name': file_name,
+        'parents': [folder_id]  # Specify the folder ID as the parent ID
+    }
     media = MediaFileUpload(file_path, resumable=True)
     file = service.files().create(body=file_metadata,
-                                        media_body=media,
-                                        fields='id').execute()
+                                  media_body=media,
+                                  fields='id').execute()
     print('File ID: %s' % file.get('id'))
+
+#########################################################################################################################
+########################***************************************************************************######################
+########################***************************************************************************######################
+#########################################################################################################################
 
 if __name__ == "__main__":
   
     access_token, refresh_token = generate_tokens(client_id, client_secret)
-    print("Access Token:", access_token)
-    print("Refresh Token:", refresh_token)
+    # print("Access Token:", access_token)
+    # print("Refresh Token:", refresh_token)
     
     # Replace 'TOKEN' with your token dictionary
-    token = {
+    tokenAuth = {
         "token": access_token,
         "refresh_token": refresh_token,
         "token_uri": "https://oauth2.googleapis.com/token",
@@ -108,4 +123,4 @@ if __name__ == "__main__":
         "scopes": SCOPES
     }
     
-    upload_file_to_drive(filepath, token)
+    upload_file_to_drive(Sourcefilepath, tokenAuth, TargetfolderId)
